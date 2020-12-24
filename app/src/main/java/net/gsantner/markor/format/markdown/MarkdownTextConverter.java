@@ -13,6 +13,8 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import com.vladsch.flexmark.ext.attributes.AttributesExtension;
+import com.vladsch.flexmark.ext.definition.DefinitionExtension;
 import com.vladsch.flexmark.ext.anchorlink.AnchorLinkExtension;
 import com.vladsch.flexmark.ext.autolink.AutolinkExtension;
 import com.vladsch.flexmark.ext.emoji.EmojiExtension;
@@ -42,6 +44,9 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.io.IOException;
 
 import other.de.stanetz.jpencconverter.JavaPasswordbasedCryption;
 
@@ -97,6 +102,8 @@ public class MarkdownTextConverter extends TextConverter {
     //########################
     // See https://github.com/vsch/flexmark-java/wiki/Extensions#tables
     private static final List<Extension> flexmarkExtensions = Arrays.asList(
+            AttributesExtension.create(),
+            DefinitionExtension.create(),
             StrikethroughExtension.create(),
             AutolinkExtension.create(),
             InsExtension.create(),
@@ -142,6 +149,7 @@ public class MarkdownTextConverter extends TextConverter {
 
         // Add id to headers
         options.set(HtmlRenderer.GENERATE_HEADER_ID, true)
+                .set(HtmlRenderer.SOFT_BREAK, "<br />\n")
                 .set(AnchorLinkExtension.ANCHORLINKS_WRAP_TEXT, true)
                 .set(AnchorLinkExtension.ANCHORLINKS_ANCHOR_CLASS, "header_no_underline");
 
@@ -172,7 +180,19 @@ public class MarkdownTextConverter extends TextConverter {
                     .set(TocExtension.LIST_CLASS, "markor-table-of-contents-list")
                     .set(TocExtension.BLANK_LINE_SPACER, false);
         }
-
+        
+        String filenameWithoutExtension = file.getName().replaceFirst("[.][^.]+$", "");
+        File metaSubDir = new File(file.getParent(), ".meta");
+        File metadataFile = new File(metaSubDir, filenameWithoutExtension + ".yaml");
+        final String metadataPath = metadataFile.getAbsolutePath();
+        String metadata = "";
+        try {
+			metadata =  new String(Files.readAllBytes(Paths.get(metadataPath)));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        markup += "\n\n<details class=\"metadata\"><summary>Metadata</summary>\n\n" + metadata + "<div id=\"metadatalink-wrapper\"><a id=\"metadatalink\" href=\"" + metadataPath + "\">&rarrlp;</a></div></details>";
+        
         // Enable Math / KaTex
         if (appSettings.isMarkdownMathEnabled() && markup.contains("$")) {
             head += HTML_KATEX_INCLUDE;

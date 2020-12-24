@@ -23,6 +23,9 @@ import net.gsantner.markor.format.TextFormat;
 
 import java.io.File;
 import java.net.URLDecoder;
+import java.io.FileWriter;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class MarkorWebViewClient extends WebViewClient {
 
@@ -62,7 +65,21 @@ public class MarkorWebViewClient extends WebViewClient {
                 } else if ((mimetype = ContextUtils.getMimeType(url)) != null) {
                     su.viewFileInOtherApp(file, mimetype);
                 } else {
-                    su.viewFileInOtherApp(file, null);
+                    String s = file.getAbsolutePath() + ".md";
+                    File f = new File(s);
+                    f.createNewFile();
+
+                    String name = file.getName();
+                    final String title = convertToTitleCaseSplitting(name);
+                    String t = "# "+title+"\n";
+                    FileWriter writer = new FileWriter(f);
+                    writer.write(t);
+                    writer.close();
+
+                    Intent newPreview = new Intent(_activity, DocumentActivity.class);
+                    newPreview.putExtra(DocumentIO.EXTRA_PATH, f);
+                    newPreview.putExtra(DocumentActivity.EXTRA_DO_PREVIEW, true);
+                    _activity.startActivity(newPreview);
                 }
             } else {
                 ContextUtils cu = new ContextUtils(_activity.getApplicationContext());
@@ -103,5 +120,22 @@ public class MarkorWebViewClient extends WebViewClient {
         _restoreScrollYEnabled = true;
     }
 
+    private static final String WORD_SEPARATOR = "-";
+    private static final String WORD_JOINER = " ";
+
+    public static String convertToTitleCaseSplitting(String text) {
+    if (text == null || text.isEmpty()) {
+        return text;
+    }
+
+    return Arrays
+      .stream(text.split(WORD_SEPARATOR))
+      .map(word -> word.isEmpty()
+        ? word
+        : Character.toTitleCase(word.charAt(0)) + word
+          .substring(1)
+          .toLowerCase())
+      .collect(Collectors.joining(WORD_JOINER));
+    }
 
 }

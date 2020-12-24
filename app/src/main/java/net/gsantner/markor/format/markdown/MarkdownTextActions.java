@@ -81,6 +81,7 @@ public class MarkdownTextActions extends TextActions {
                 new ActionItem(R.string.tmaid_common_new_line_below, R.drawable.ic_baseline_keyboard_return_24, R.string.start_new_line_below),
                 new ActionItem(R.string.tmaid_common_move_text_one_line_up, R.drawable.ic_baseline_arrow_upward_24, R.string.move_text_one_line_up),
                 new ActionItem(R.string.tmaid_common_move_text_one_line_down, R.drawable.ic_baseline_arrow_downward_24, R.string.move_text_one_line_down),
+                new ActionItem(R.string.tmaid_markdown_link, R.drawable.ic_link_black_24dp, R.string.link),
         };
 
         return Arrays.asList(TMA_ACTIONS);
@@ -108,7 +109,7 @@ public class MarkdownTextActions extends TextActions {
                     return true;
                 }
                 case R.string.tmaid_markdown_h1: {
-                    runRegexReplaceAction(MarkdownReplacePatternGenerator.setOrUnsetHeadingWithLevel(1));
+                    runSpecialPrefixActionH1();
                     return true;
                 }
                 case R.string.tmaid_markdown_h2: {
@@ -184,6 +185,10 @@ public class MarkdownTextActions extends TextActions {
                 case R.string.tmaid_common_deindent: {
                     runIndentLines(true);
                     runRenumberOrderedListIfRequired();
+                    return true;
+                }
+                case R.string.tmaid_markdown_link: {
+                    runMarkdownLinker();
                     return true;
                 }
                 default: {

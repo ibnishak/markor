@@ -319,6 +319,18 @@ public abstract class TextActions {
         runRegexReplaceAction(Arrays.asList(patterns));
     }
 
+    protected void runSpecialPrefixActionH1() {
+
+        ReplacePattern[] patterns = {
+                // Replace action with replacement
+                new ReplacePattern("^#", "##"),
+                // Replace replacement or nothing with action
+                new ReplacePattern( "^(?!#)", "# "),
+        };
+
+        runRegexReplaceAction(Arrays.asList(patterns));
+    }
+
     public static class ReplacePattern {
         public final Pattern searchPattern;
         public final String replacePattern;
@@ -469,6 +481,25 @@ public abstract class TextActions {
                         .insert(_hlEditor.getSelectionEnd(), _action);
                 _hlEditor.setSelection(_hlEditor.getSelectionStart() - _action.length());
             }
+        }
+    }
+    protected void runMarkdownLinker() {
+        if (_hlEditor.getText() == null) {
+            return;
+        }
+        if (_hlEditor.hasSelection()) {
+            String text = _hlEditor.getText().toString();
+            int selectionStart = _hlEditor.getSelectionStart();
+            int selectionEnd = _hlEditor.getSelectionEnd();
+            String sel = text.substring(selectionStart, selectionEnd);
+            String ln = sel.toLowerCase();
+            ln = ln.replaceAll("[^a-zA-Z0-9]", "-");
+            String link = "[" + sel + "](" + ln + ")";
+            _hlEditor.getText().replace(selectionStart, selectionEnd, link);
+           
+        } else {
+            return;
+           
         }
     }
 

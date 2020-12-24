@@ -231,6 +231,7 @@ work. If not, see <https://creativecommons.org/publicdomain/zero/1.0/>.
     <string name="tmaid_common_move_text_one_line_down" translatable="false">tmaid_common_move_text_one_line_down</string>
 
     <string name="tmaid_markdown_quote" translatable="false">tmaid_markdown_quote</string>
+    <string name="tmaid_markdown_link" translatable="false">tmaid_markdown_link</string>
     <string name="tmaid_markdown_h1" translatable="false">tmaid_markdown_h1</string>
     <string name="tmaid_markdown_h2" translatable="false">tmaid_markdown_h2</string>
     <string name="tmaid_markdown_h3" translatable="false">tmaid_markdown_h3</string>
