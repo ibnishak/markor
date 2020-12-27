@@ -18,14 +18,27 @@ function _yellow {
 }
 
 repeat $COLUMNS;do printf "=";done
+export ANDROID_SDK_ROOT="$HOME/android-sdk"
 
-
-if [[ ! -d ${ANDROID_SDK_ROOT} ]]; then
-    _red "ERROR: Cannot find android SDK at ${ANDROID_SDK_ROOT}"
-    exit 1
+if [[ ! -d ${ANDROID_SDK_ROOT}]]; then
+    curl https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip > sdk-tools.zip 
+    unzip -qq -n sdk-tools.zip -d $HOME/android-sdk
 fi
 
+
 if [[ ! -d ${ANDROID_SDK_ROOT} ]]; then
+    _red "ERROR: Cannot find android SDK at ${ANDROID_SDK_ROOT}. Starting download"
+    curl https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip > sdk-tools.zip 
+    unzip -qq -n sdk-tools.zip -d $HOME/android-sdk
+    echo y | ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager 'tools'
+    echo y | ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager 'platform-tools' 
+    echo y | ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager 'build-tools;29.0.3' 
+    echo y | ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager 'platforms;android-29' 
+    echo y | ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager 'extras;google;m2repository' 
+    ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager --licenses
+fi
+
+if [[ ! -d ${JAVA_HOME} ]]; then
     _red "ERROR: Cannot find JAVA_HOME at ${JAVA_HOME}"
     exit 1
 fi
