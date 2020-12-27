@@ -18,13 +18,6 @@ function _yellow {
 }
 
 repeat $COLUMNS;do printf "=";done
-export ANDROID_SDK_ROOT="$HOME/android-sdk"
-
-if [[ ! -d ${ANDROID_SDK_ROOT}]]; then
-    curl https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip > sdk-tools.zip 
-    unzip -qq -n sdk-tools.zip -d $HOME/android-sdk
-fi
-
 
 if [[ ! -d ${ANDROID_SDK_ROOT} ]]; then
     _red "ERROR: Cannot find android SDK at ${ANDROID_SDK_ROOT}. Starting download"
